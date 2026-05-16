@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpRequest
 from django.contrib import messages
+
+from hotels.models import City
 from .models import Contact
 # Create your views here.
 
@@ -49,7 +51,11 @@ def terms_privacy_view(request: HttpRequest):
     return render(request, 'main/terms_privacy.html')
 
 def cities_view(request: HttpRequest):
-    return render(request, 'main/cities.html')
+
+    cities = City.objects.filter(is_active=True)
+    city = City.objects.filter(name__iexact='Riyadh', is_active=True).first()
+
+    return render(request, 'main/cities.html', {'cities': cities, 'city': city})
 
 
 def mode_view(request, mode):
