@@ -14,7 +14,7 @@
         <a href="{% url 'hotel_owner:capsule_create' hotel.pk %}" class="btn btn-dark">
             <i class="bi bi-plus-lg"></i> Add Capsules
         </a>
-        <a href="{% url 'hotel_owner:hotel_pending' %}" class="btn btn-outline-dark">
+        <a href="{% url 'hotel_owner:my_hotels' %}" class="btn btn-outline-dark">
             <i class="bi bi-arrow-left"></i> Back
         </a>
     </div>
@@ -88,20 +88,47 @@
                             <a href="{% url 'hotel_owner:capsule_update' capsule.pk %}" class="btn btn-outline-dark btn-sm">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <a href="{% url 'hotel_owner:capsule_delete' capsule.pk %}" class="btn btn-outline-danger btn-sm">
+                            <!-- Delete Button -->
+                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteCapsuleModal{{ capsule.pk }}">
                                 <i class="bi bi-trash"></i>
-                            </a>
+                            </button>
                         </div>
                     </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center text-muted">No capsules yet.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- Modals OUTSIDE the table -->
+{% for capsule in capsules %}
+<div class="modal fade" id="deleteCapsuleModal{{ capsule.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Capsule</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete capsule <strong>{{ capsule.capsule_num }}</strong>?</p>
+                <p class="text-muted small">
+                    <i class="bi bi-exclamation-triangle text-danger"></i>
+                    This action cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" action="{% url 'hotel_owner:capsule_delete' capsule.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 {% endblock %}
