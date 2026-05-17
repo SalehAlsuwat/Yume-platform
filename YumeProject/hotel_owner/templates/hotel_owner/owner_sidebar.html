@@ -1,0 +1,50 @@
+<div class="d-flex flex-column flex-shrink-0 border-end" style="width:230px;">
+
+    <div class="p-3 border-bottom">
+        <span class="fw-semibold small text-uppercase text-muted">
+            <i class="bi bi-building me-2"></i>Owner Panel
+        </span>
+    </div>
+
+    <nav class="nav nav-pills flex-column gap-1 p-2 flex-grow-1">
+
+        <span class="px-2 py-1 small text-muted text-uppercase" style="font-size:.7rem;">Overview</span>
+        <a href="#dashboard"
+           class="nav-link d-flex align-items-center gap-2 active"
+           data-bs-toggle="tab" data-bs-target="#dashboard" role="tab">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+
+        <span class="px-2 pt-3 pb-1 small text-muted text-uppercase" style="font-size:.7rem;">Hotels</span>
+        <a href="#my-hotels"
+           class="nav-link d-flex align-items-center gap-2"
+           data-bs-toggle="tab" data-bs-target="#my-hotels" role="tab">
+            <i class="bi bi-buildings"></i> My Hotels
+        </a>
+
+        <span class="px-2 pt-3 pb-1 small text-muted text-uppercase" style="font-size:.7rem;">Bookings</span>
+        <a href="#bookings"
+           class="nav-link d-flex align-items-center gap-2"
+           data-bs-toggle="tab" data-bs-target="#bookings" role="tab">
+            <i class="bi bi-calendar-check"></i> All Bookings
+        </a>
+
+        <span class="px-2 pt-3 pb-1 small text-muted text-uppercase" style="font-size:.7rem;">Revenue</span>
+        <a href="#revenue"
+           class="nav-link d-flex align-items-center gap-2"
+           data-bs-toggle="tab" data-bs-target="#revenue" role="tab">
+            <i class="bi bi-cash-stack"></i> Payments
+        </a>
+
+    </nav>
+
+    <div class="p-3 border-top">
+        <form method="post" action="{% url 'accounts:sign_out' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-secondary w-100">
+                <i class="bi bi-box-arrow-left me-1"></i> Sign out
+            </button>
+        </form>
+    </div>
+
+</div>

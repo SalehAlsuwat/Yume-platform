@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+
+{% block title %}Owner Dashboard — Yume{% endblock %}
+
+{% block content %}
+<div class="d-flex mx-n3" style="min-height: calc(100vh - 160px);">
+
+    {% include 'hotel_owner/owner_sidebar.html' %}
+
+    <!-- Main content -->
+    <div class="flex-grow-1 p-4 overflow-auto">
+        <div class="tab-content">
+
+            <!-- ── Dashboard Overview ── -->
+            <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                <h5 class="mb-4">Overview</h5>
+                <div class="row g-3">
+
+                    <div class="col-sm-6 col-xl">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-buildings fs-3 text-primary"></i>
+                                <div>
+                                    <div class="small text-muted">Total Hotels</div>
+                                    <div class="fw-semibold fs-5">{{ total_hotels }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-door-closed fs-3 text-info"></i>
+                                <div>
+                                    <div class="small text-muted">Total Capsules</div>
+                                    <div class="fw-semibold fs-5">{{ total_capsules }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-door-open fs-3 text-success"></i>
+                                <div>
+                                    <div class="small text-muted">Available Capsules</div>
+                                    <div class="fw-semibold fs-5">{{ available_capsules }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-calendar-check fs-3 text-warning"></i>
+                                <div>
+                                    <div class="small text-muted">Total Bookings</div>
+                                    <div class="fw-semibold fs-5">{{ total_bookings }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-clock-history fs-3 text-danger"></i>
+                                <div>
+                                    <div class="small text-muted">Pending Bookings</div>
+                                    <div class="fw-semibold fs-5">{{ pending_bookings }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-cash-stack fs-3 text-success"></i>
+                                <div>
+                                    <div class="small text-muted">Total Revenue</div>
+                                    <div class="fw-semibold fs-5">{{ total_revenue }} SAR</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ── My Hotels ── -->
+            <div class="tab-pane fade" id="my-hotels" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">My Hotels</h5>
+                    <a href="{% url 'hotel_owner:hotel_create' %}" class="btn btn-sm btn-dark">
+                        <i class="bi bi-plus-lg me-1"></i> Add Hotel
+                    </a>
+                </div>
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Hotel Name</th>
+                                    <th>City</th>
+                                    <th>Capsules</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for hotel in hotels %}
+                                <tr>
+                                    <td class="text-muted small">{{ forloop.counter }}</td>
+                                    <td>
+                                        <div class="fw-medium">{{ hotel.name }}</div>
+                                        <div class="small text-muted">{{ hotel.address }}</div>
+                                    </td>
+                                    <td>{{ hotel.city.name|default:"—" }}</td>
+                                    <td>{{ hotel.capsules.count }}</td>
+                                    <td>
+                                        {% if hotel.is_active %}
+                                            <span class="badge bg-success">Approved</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            {% if hotel.is_active %}
+                                            <a href="{% url 'hotel_owner:capsule_list' hotel.pk %}" class="btn btn-sm btn-outline-dark">
+                                                <i class="bi bi-grid"></i>
+                                            </a>
+                                            {% endif %}
+                                            <a href="{% url 'hotel_owner:hotel_update' hotel.pk %}" class="btn btn-sm btn-outline-dark">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal{{ hotel.pk }}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="bi bi-buildings" style="font-size:2rem;"></i>
+                                        <p class="mt-2 mb-0 small">No hotels yet</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Bookings ── -->
+            <div class="tab-pane fade" id="bookings" role="tabpanel">
+                <h5 class="mb-4">All Bookings</h5>
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Customer</th>
+                                    <th>Hotel</th>
+                                    <th>Capsule</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Type</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in bookings %}
+                                <tr>
+                                    <td class="text-muted small">{{ forloop.counter }}</td>
+                                    <td>{{ booking.customer.user.get_full_name|default:booking.customer.user.username }}</td>
+                                    <td>{{ booking.capsule.hotel.name }}</td>
+                                    <td>{{ booking.capsule.capsule_num }}</td>
+                                    <td class="small">{{ booking.check_in|date:"d M Y" }}</td>
+                                    <td class="small">{{ booking.check_out|date:"d M Y" }}</td>
+                                    <td><span class="badge bg-secondary">{{ booking.booking_type }}</span></td>
+                                    <td>{{ booking.total_price }} SAR</td>
+                                    <td>
+                                        {% if booking.status == 'paid' %}
+                                            <span class="badge bg-success">Paid</span>
+                                        {% elif booking.status == 'pending' %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% elif booking.status == 'cancelled' %}
+                                            <span class="badge bg-danger">Cancelled</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ booking.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted py-5">
+                                        <i class="bi bi-calendar-x" style="font-size:2rem;"></i>
+                                        <p class="mt-2 mb-0 small">No bookings yet</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Revenue ── -->
+            <div class="tab-pane fade" id="revenue" role="tabpanel">
+                <h5 class="mb-4">Payments</h5>
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Booking</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Paid At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payments %}
+                                <tr>
+                                    <td class="text-muted small">{{ forloop.counter }}</td>
+                                    <td>{{ payment.booking.capsule.hotel.name }} — {{ payment.booking.capsule.capsule_num }}</td>
+                                    <td>{{ payment.amount }} SAR</td>
+                                    <td>{{ payment.provider_name }}</td>
+                                    <td>
+                                        {% if payment.status == 'paid' %}
+                                            <span class="badge bg-success">Paid</span>
+                                        {% elif payment.status == 'verified' %}
+                                            <span class="badge bg-primary">Verified</span>
+                                        {% elif payment.status == 'failed' %}
+                                            <span class="badge bg-danger">Failed</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ payment.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="small text-muted">{{ payment.paid_at|date:"d M Y, H:i"|default:"—" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="bi bi-cash" style="font-size:2rem;"></i>
+                                        <p class="mt-2 mb-0 small">No payments yet</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modals -->
+{% for hotel in hotels %}
+<div class="modal fade" id="deleteModal{{ hotel.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Hotel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ hotel.name }}</strong>?</p>
+                <p class="text-muted small">
+                    <i class="bi bi-exclamation-triangle text-danger"></i>
+                    This will also delete all <strong>{{ hotel.capsules.count }}</strong> capsules.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" action="{% url 'hotel_owner:hotel_delete' hotel.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

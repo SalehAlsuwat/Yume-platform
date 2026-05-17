@@ -3,13 +3,32 @@ from django.http import HttpResponse,HttpRequest
 from accounts.decorators import owner_required
 from hotels.models import CapsuleHotel, Capsule
 from .forms import CapsuleHotelForm, CapsuleForm
+from  booking.models import Booking
+from payment.models import Payment
+from django.db.models import Sum
 
 
 
 
 @owner_required
 def owner_view(request):
-    return HttpResponse("Owner dashboard — coming soon.")
+    owner = request.user.owner_profile
+    hotels = CapsuleHotel.objects.filter(hotel_owner=owner)
+    capsules = Capsule.objects.filter(hotel__in=hotels)
+    bookings = Booking.objects.filter(capsule__hotel__in=hotels)
+    payments = Payment.objects.filter(booking__capsule__hotel__in=hotels)
+
+    return render(request, 'hotel_owner/dashboard.html', {
+        'hotels': hotels,
+        'total_hotels': hotels.count(),
+        'total_capsules': capsules.count(),
+        'available_capsules': capsules.filter(is_available=True).count(),
+        'total_bookings': bookings.count(),
+        'pending_bookings': bookings.filter(status='pending').count(),
+        'total_revenue': payments.filter(status='paid').aggregate(Sum('amount'))['amount__sum'] or 0,
+        'bookings': bookings.order_by('-created_at'),
+        'payments': payments.order_by('-created_at'),
+    })
 
 # ── Hotel Views ──
 
