@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .forms import CustomerSignUpForm, OwnerSignUpForm, SignInForm
+from .forms import CustomerSignUpForm, OwnerSignUpForm, SignInForm, UserEditForm, CustomerProfileEditForm, OwnerProfileEditForm
 from .models import CustomerProfile, OwnerProfile, GROUP_CUSTOMER, GROUP_OWNER
 
 
@@ -56,11 +56,6 @@ def sign_up_owner(request):
 
     return render(request, 'accounts/sign_up_company.html', {'form': form})
 
-#TODO:
-def edit_profile(request):
-    if request.method == 'POST':
-        pass
-
 def public_profile_view(request, username):
     profile = get_object_or_404(OwnerProfile, user__username=username, user__role=GROUP_OWNER)
     return render(request, 'accounts/company_profile.html', {'profile': profile})
@@ -93,6 +88,30 @@ def sign_out(request):
     if request.method == 'POST':
         logout(request)
     return redirect('main:home_view')
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    ProfileForm = OwnerProfileEditForm if user.is_owner else CustomerProfileEditForm
+    profile = user.owner_profile if user.is_owner else user.customer_profile
+
+    if request.method == 'POST':
+        user_form = UserEditForm(request.POST, instance=user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('accounts:account_view')
+    else:
+        user_form = UserEditForm(instance=user)
+        profile_form = ProfileForm(instance=profile)
+
+    return render(request, 'accounts/edit_profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    })
+
+
 
 
 @login_required
