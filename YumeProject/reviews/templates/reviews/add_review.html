@@ -1,0 +1,168 @@
+<style>
+.custom-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.custom-modal-content {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 20px;
+}
+</style>
+
+
+{% if request.user.is_authenticated %}
+
+<button type="button"
+        onclick="openReviewModal()"
+        class="btn btn-dark rounded-pill px-4">
+    Write Review
+</button>
+
+{% endif %}
+
+
+<div id="reviewModal" class="custom-modal">
+
+    <div class="custom-modal-content">
+
+        <div class="d-flex justify-content-between mb-4">
+
+            <h4>Write Review</h4>
+
+            <span onclick="closeReviewModal()"
+                  style="cursor:pointer;">
+                ✖
+            </span>
+
+        </div>
+
+        <form method="POST"
+              action="{% url 'reviews:add_review_view' %}">
+
+            {% csrf_token %}
+
+            <input type="hidden"
+                   name="hotel_id"
+                   value="{{ hotel.id }}">
+
+            <!-- RATING -->
+
+            <div class="mb-4">
+
+                <label class="fw-bold mb-2 d-block">
+                    Rating
+                </label>
+
+                <div id="starRating"
+                    class="fs-2 text-warning d-flex gap-2">
+
+                    <i class="bi bi-star star" data-value="1"></i>
+                    <i class="bi bi-star star" data-value="2"></i>
+                    <i class="bi bi-star star" data-value="3"></i>
+                    <i class="bi bi-star star" data-value="4"></i>
+                    <i class="bi bi-star star" data-value="5"></i>
+
+                </div>
+
+                <input type="hidden"
+                    name="rating"
+                    id="ratingInput"
+                    value="5">
+
+            </div>
+
+            <div class="mb-3">
+
+                <label>Comment</label>
+
+                <textarea name="comment"
+                          rows="4"
+                          class="form-control"></textarea>
+
+            </div>
+
+            <button class="btn btn-dark w-100">
+                Submit
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+function openReviewModal() {
+    document.getElementById("reviewModal").style.display = "block";
+}
+
+function closeReviewModal() {
+    document.getElementById("reviewModal").style.display = "none";
+}
+
+window.addEventListener("click", function(e) {
+
+    let modal = document.getElementById("reviewModal");
+
+    if (e.target === modal) {
+        closeReviewModal();
+    }
+
+});
+
+
+const stars = document.querySelectorAll('.star');
+const ratingInput = document.getElementById('ratingInput');
+
+let currentRating = 5;
+
+paintStars(currentRating);
+
+stars.forEach(star => {
+
+    star.addEventListener('click', () => {
+
+        currentRating = star.dataset.value;
+
+        ratingInput.value = currentRating;
+
+        paintStars(currentRating);
+
+    });
+
+});
+
+
+function paintStars(rating) {
+
+    stars.forEach(star => {
+
+        if (star.dataset.value <= rating) {
+
+            star.classList.remove('bi-star');
+            star.classList.add('bi-star-fill');
+
+        } else {
+
+            star.classList.remove('bi-star-fill');
+            star.classList.add('bi-star');
+
+        }
+
+    });
+
+}
+
+</script>

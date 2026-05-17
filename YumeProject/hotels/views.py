@@ -51,8 +51,8 @@ def hotel_list(request):
 def hotel_detail(request, pk):
     hotel = get_object_or_404(CapsuleHotel, pk=pk)
     capsules = hotel.capsules.filter(is_available=True)
-    # reviews = hotel.review_set.all().order_by('-created_at')[:5]
-    
+    reviews = hotel.reviews.all().order_by('-created_at')[:5]
+
     related_hotels = CapsuleHotel.objects.filter(
         city=hotel.city,
         is_active=True
@@ -62,7 +62,6 @@ def hotel_detail(request, pk):
         'hotel': hotel,
         'capsules': capsules,
         'capsules_count': capsules.count(),
-        # 'reviews': reviews,
-        'reviews':[],
+        'reviews': reviews,
         'related_hotels': related_hotels,
     })
