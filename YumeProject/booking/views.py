@@ -27,16 +27,16 @@ def booking_view(request, pk):
     hotel = get_object_or_404(CapsuleHotel, pk=pk, is_active=True)
 
     if not request.user.is_customer:
-        messages.error(request, 'Only customers can book capsules.')
+        messages.error(request, 'Only customers can book capsules.', extra_tags='alert-danger')
         return redirect('accounts:account_view')
 
     if request.method != 'POST':
-        messages.info(request, 'Choose a capsule and start booking from the hotel page.')
+        messages.info(request, 'Choose a capsule and start booking from the hotel page.', extra_tags='alert-info')
         return redirect('hotels:hotel_detail', pk=hotel.pk)
 
     form = BookingRequestForm(request.POST)
     if not form.is_valid():
-        messages.error(request, 'Please review the booking details and try again.')
+        messages.error(request, 'Please review the booking details and try again.', extra_tags='alert-danger')
         return redirect('hotels:hotel_detail', pk=hotel.pk)
 
     capsule = get_object_or_404(
@@ -56,13 +56,13 @@ def booking_view(request, pk):
     customer_profile = _customer_profile_for_user(request.user)
 
     if customer_profile is None:
-        messages.error(request, 'Your customer profile is missing. Please sign in again or contact support.')
+        messages.error(request, 'Your customer profile is missing. Please sign in again or contact support.', extra_tags='alert-danger')
         return redirect('accounts:sign_in')
 
     with transaction.atomic():
         capsule = Capsule.objects.select_for_update().get(pk=capsule.pk)
         if not capsule.is_available:
-            messages.error(request, 'That capsule is no longer available.')
+            messages.error(request, 'That capsule is no longer available.', extra_tags='alert-danger')
             return redirect('hotels:hotel_detail', pk=hotel.pk)
 
         booking = Booking.objects.create(
@@ -81,5 +81,5 @@ def booking_view(request, pk):
         capsule.is_available = False
         capsule.save(update_fields=['is_available'])
 
-    messages.success(request, 'Booking created. Complete payment to confirm it.')
+    messages.success(request, 'Booking created. Complete payment to confirm it.', extra_tags='alert-success')
     return redirect(reverse('payment:payment', args=[booking.pk]))
