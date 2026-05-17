@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Complete Payment{% endblock %}
+
+{% block extra_head %}
+<style>
+    .payment-shell {
+        max-width: 860px;
+        margin: 0 auto;
+    }
+
+    .payment-shell .mysr-form {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .payment-shell .mysr-form img,
+    .payment-shell .mysr-form svg {
+        max-width: 100%;
+        max-height: 72px;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .payment-shell .mysr-form label,
+    .payment-shell .mysr-form button,
+    .payment-shell .mysr-form a,
+    .payment-shell .mysr-form [role="button"] {
+        font-size: 0.95rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 payment-shell">
+            <div class="card-body p-4 p-lg-5">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <p class="text-uppercase text-muted mb-1 small">Payment</p>
+                        <h3 class="mb-1">Complete your Moyasar payment</h3>
+                        <p class="text-muted mb-0">Booking #{{ booking.pk }} for {{ booking.capsule.hotel.name }}</p>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-semibold">{{ booking.total_price }} {{ currency }}</div>
+                        <small class="text-muted">{{ booking.booking_type|title }} x {{ booking.quantity }}</small>
+                    </div>
+                </div>
+
+                {% if publishable_key %}
+                    <div
+                        class="mysr-form"
+                        data-publishable-key="{{ publishable_key }}"
+                        data-amount="{{ amount_minor_units }}"
+                        data-currency="{{ currency }}"
+                        data-description="{{ description|escape }}"
+                        data-callback-url="{{ callback_url|escape }}"
+                        data-payment-methods='{{ payment_methods_json|escape }}'
+                        data-supported-networks='{{ supported_networks_json|escape }}'
+                    ></div>
+                    <script src="https://cdn.jsdelivr.net/npm/moyasar-payment-form@2.2.9/dist/moyasar.umd.min.js"></script>
+                    <script>
+                        const paymentFormElement = document.querySelector('.mysr-form');
+                        const paymentMethods = JSON.parse(paymentFormElement.dataset.paymentMethods);
+                        const supportedNetworks = JSON.parse(paymentFormElement.dataset.supportedNetworks);
+
+                        Moyasar.init({
+                            element: paymentFormElement,
+                            amount: Number(paymentFormElement.dataset.amount),
+                            currency: paymentFormElement.dataset.currency,
+                            description: paymentFormElement.dataset.description,
+                            publishable_api_key: paymentFormElement.dataset.publishableKey,
+                            callback_url: paymentFormElement.dataset.callbackUrl,
+                            methods: paymentMethods,
+                            supported_networks: supportedNetworks,
+                            fixed_width: false,
+                        });
+                    </script>
+                {% else %}
+                    <div class="alert alert-warning mb-0">
+                        Moyasar publishable key is not configured.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

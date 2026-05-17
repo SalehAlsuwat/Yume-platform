@@ -88,14 +88,24 @@
             </div>
 
             <!-- Counter + Book -->
-            <div class="d-flex align-items-center gap-3">
+            <form method="post" action="{% url 'booking:booking_view' hotel.pk %}" class="d-flex align-items-center gap-3">
+                {% csrf_token %}
+                <input type="hidden" name="capsule_id" value="{{ capsules.first.id }}">
+                <input type="hidden" name="quantity" id="quantity-input" value="1">
+
                 <div class="d-flex align-items-center gap-2">
-                    <button class="btn btn-outline-dark btn-sm" id="decrease">-</button>
+                    <button type="button" class="btn btn-outline-dark btn-sm" id="decrease">-</button>
                     <span id="quantity">1</span>
-                    <button class="btn btn-outline-dark btn-sm" id="increase">+</button>
+                    <button type="button" class="btn btn-outline-dark btn-sm" id="increase">+</button>
                 </div>
-                <a href="#" class="btn btn-dark">Book</a>
-            </div>
+
+                <select name="booking_type" class="form-select form-select-sm" style="width: 140px;">
+                    <option value="hour">Hourly</option>
+                    <option value="night">Nightly</option>
+                </select>
+
+                <button type="submit" class="btn btn-dark">Book</button>
+            </form>
 
         </div>
     </div>
@@ -108,13 +118,14 @@
 <script>
     const max = {{ capsules_count }};
     let qty = 1;
+    const quantityInput = document.getElementById('quantity-input');
 
     document.getElementById('increase').addEventListener('click', () => {
-        if (qty < max) { qty++; document.getElementById('quantity').innerText = qty; }
+        if (qty < max) { qty++; document.getElementById('quantity').innerText = qty; quantityInput.value = qty; }
     });
 
     document.getElementById('decrease').addEventListener('click', () => {
-        if (qty > 1) { qty--; document.getElementById('quantity').innerText = qty; }
+        if (qty > 1) { qty--; document.getElementById('quantity').innerText = qty; quantityInput.value = qty; }
     });
 </script>
 
