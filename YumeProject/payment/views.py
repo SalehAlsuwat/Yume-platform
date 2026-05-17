@@ -65,7 +65,7 @@ def payment_callback_view(request):
 
     if not booking_id or not payment_attempt_id or not payment_id:
         logger.error('Payment verification data is missing.')
-        messages.error(request, 'Payment verification data is missing.')
+        messages.error(request, 'Payment verification data is missing.', extra_tags='alert-danger')
         return render(request, 'payment/result.html', {'success': False, 'booking': None, 'payment': None})
 
     booking = get_object_or_404(Booking, pk=booking_id, customer__user=request.user)
@@ -84,7 +84,7 @@ def payment_callback_view(request):
         booking.save(update_fields=['status'])
         booking.capsule.is_available = True
         booking.capsule.save(update_fields=['is_available'])
-        messages.error(request, 'We could not verify the payment.')
+        messages.error(request, 'We could not verify the payment.', extra_tags='alert-danger')
         return render(request, 'payment/result.html', {'success': False, 'booking': booking, 'payment': payment_attempt})
 
     expected_amount = amount_to_minor_units(booking.total_price)
@@ -109,7 +109,7 @@ def payment_callback_view(request):
         booking.capsule.is_available = False
         booking.capsule.save(update_fields=['is_available'])
 
-        messages.success(request, 'Payment confirmed successfully.')
+        messages.success(request, 'Payment confirmed successfully.', extra_tags='alert-success')
         return render(request, 'payment/result.html', {'success': True, 'booking': booking, 'payment': payment_attempt})
 
     payment_attempt.status = Payment.STATUS_FAILED
@@ -120,5 +120,5 @@ def payment_callback_view(request):
     booking.capsule.is_available = True
     booking.capsule.save(update_fields=['is_available'])
 
-    messages.error(request, 'The payment was not completed successfully.')
+    messages.error(request, 'The payment was not completed successfully.', extra_tags='alert-danger')
     return render(request, 'payment/result.html', {'success': False, 'booking': booking, 'payment': payment_attempt})
