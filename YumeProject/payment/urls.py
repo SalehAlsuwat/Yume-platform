@@ -4,5 +4,6 @@ from . import views
 app_name = 'payment'
 
 urlpatterns = [
-    path('', views.payment_view, name='payment'),
+    path('<int:booking_id>/', views.payment_view, name='payment'),
+    path('callback/', views.payment_callback_view, name='callback'),
 ]

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Result{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4 p-lg-5">
+                {% if success %}
+                    <div class="alert alert-success">
+                        Payment completed successfully.
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger">
+                        We could not confirm the payment.
+                    </div>
+                {% endif %}
+
+                {% if booking %}
+                    <p class="mb-1"><strong>Booking:</strong> #{{ booking.pk }}</p>
+                    <p class="mb-1"><strong>Status:</strong> {{ booking.status }}</p>
+                    <p class="mb-1"><strong>Capsule:</strong> {{ booking.capsule.capsule_num }}</p>
+                    <p class="mb-0"><strong>Total:</strong> {{ booking.total_price }} SAR</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

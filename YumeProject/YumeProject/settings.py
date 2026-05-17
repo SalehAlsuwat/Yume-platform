@@ -11,9 +11,14 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -131,5 +136,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = '/accounts/sign-in/'
+
+MOYASAR_API_BASE_URL = os.environ.get('MOYASAR_API_BASE_URL', 'https://api.moyasar.com/v1')
+MOYASAR_PUBLISHABLE_KEY = os.environ.get('MOYASAR_PUBLISHABLE_KEY', '')
+MOYASAR_SECRET_KEY = os.environ.get('MOYASAR_SECRET_KEY', '')
+MOYASAR_CURRENCY = os.environ.get('MOYASAR_CURRENCY', 'SAR')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
