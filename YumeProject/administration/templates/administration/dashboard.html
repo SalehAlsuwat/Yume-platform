@@ -17,46 +17,58 @@
             <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
                 <h5 class="mb-4">Overview</h5>
                 <div class="row g-3">
-                    <div class="col-sm-6 col-xl-3">
+                    <div class="col-sm-6 col-xl">
                         <div class="card border-0 shadow-sm rounded-4 p-3">
                             <div class="d-flex align-items-center gap-3">
                                 <i class="bi bi-hourglass-split fs-3 text-warning"></i>
                                 <div>
                                     <div class="small text-muted">Pending Hotels</div>
-                                    <div class="fw-semibold fs-5">—</div>
+                                    <div class="fw-semibold fs-5">{{ pending_hotels|length }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-xl-3">
+                    <div class="col-sm-6 col-xl">
                         <div class="card border-0 shadow-sm rounded-4 p-3">
                             <div class="d-flex align-items-center gap-3">
                                 <i class="bi bi-building-check fs-3 text-success"></i>
                                 <div>
                                     <div class="small text-muted">Approved Hotels</div>
-                                    <div class="fw-semibold fs-5">—</div>
+                                    <div class="fw-semibold fs-5">{{ approved_hotels|length }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-xl-3">
+                    <div class="col-sm-6 col-xl">
                         <div class="card border-0 shadow-sm rounded-4 p-3">
                             <div class="d-flex align-items-center gap-3">
                                 <i class="bi bi-people fs-3 text-primary"></i>
                                 <div>
                                     <div class="small text-muted">Total Users</div>
-                                    <div class="fw-semibold fs-5">—</div>
+                                    <div class="fw-semibold fs-5">{{ all_users|length }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-xl-3">
+                    <div class="col-sm-6 col-xl">
                         <div class="card border-0 shadow-sm rounded-4 p-3">
                             <div class="d-flex align-items-center gap-3">
                                 <i class="bi bi-geo-alt fs-3 text-info"></i>
                                 <div>
                                     <div class="small text-muted">Cities</div>
-                                    <div class="fw-semibold fs-5">—</div>
+                                    <div class="fw-semibold fs-5">{{ cities|length }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl">
+                        <div class="card border-0 shadow-sm rounded-4 p-3" role="button"
+                             data-bs-toggle="tab" data-bs-target="#contact-requests" style="cursor:pointer;">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-envelope fs-3 text-danger"></i>
+                                <div>
+                                    <div class="small text-muted">Contact Requests</div>
+                                    <div class="fw-semibold fs-5">{{ contact_requests|length }}</div>
                                 </div>
                             </div>
                         </div>
@@ -126,7 +138,7 @@
                                     <th>Hotel Name</th>
                                     <th>Owner</th>
                                     <th>City</th>
-                                    <th>Rating</th>
+                                    <th>Created at</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -294,12 +306,122 @@
                 </div>
             </div>
 
+            <!-- Contact Requests -->
+            <div class="tab-pane fade" id="contact-requests" role="tabpanel">
+                <h5 class="mb-4">Contact Requests</h5>
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Subject</th>
+                                    <th>Received</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for contact in contact_requests %}
+                                <tr>
+                                    <td class="text-muted small">{{ forloop.counter }}</td>
+                                    <td class="fw-medium">{{ contact.first_name }} {{ contact.last_name }}</td>
+                                    <td class="small">{{ contact.email }}</td>
+                                    <td>{{ contact.subject }}</td>
+                                    <td class="small text-muted">{{ contact.created_at|date:"d M Y, H:i" }}</td>
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-secondary contact-view-btn"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#contactDetailModal"
+                                                data-name="{{ contact.first_name }} {{ contact.last_name }}"
+                                                data-email="{{ contact.email }}"
+                                                data-subject="{{ contact.subject }}"
+                                                data-message="{{ contact.message }}"
+                                                data-date="{{ contact.created_at|date:'d M Y, H:i' }}">
+                                            <i class="bi bi-eye me-1"></i>View
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="bi bi-envelope" style="font-size:2rem;"></i>
+                                        <p class="mt-2 mb-0 small">No contact requests yet</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             {% endblock %}
 
         </div>
     </div>
 
 </div>
+<!-- Contact detail modal -->
+<div class="modal fade" id="contactDetailModal" tabindex="-1" aria-labelledby="contactDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" data-bs-theme="light">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title text-dark" id="contactDetailModalLabel">
+                    <i class="bi bi-envelope me-2 text-danger"></i>Contact Request
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 py-3">
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <p class="small text-secondary mb-1">From</p>
+                        <p class="fw-semibold text-dark mb-0" id="cm-name"></p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="small text-secondary mb-1">Email</p>
+                        <a id="cm-email" href="" class="fw-medium text-dark text-decoration-none"></a>
+                    </div>
+                    <div class="col-sm-8">
+                        <p class="small text-secondary mb-1">Subject</p>
+                        <p class="fw-semibold text-dark mb-0" id="cm-subject"></p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p class="small text-secondary mb-1">Received</p>
+                        <p class="small text-dark mb-0" id="cm-date"></p>
+                    </div>
+                </div>
+                <hr class="my-2">
+                <p class="small text-secondary mb-2">Message</p>
+                <p class="text-dark lh-lg mb-0" id="cm-message" style="white-space:pre-wrap;"></p>
+            </div>
+            <div class="modal-footer border-top">
+                <a id="cm-reply" href="" class="btn btn-sm btn-outline-dark">
+                    <i class="bi bi-reply me-1"></i>Reply via Email
+                </a>
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('contactDetailModal').addEventListener('show.bs.modal', function (e) {
+        const btn = e.relatedTarget;
+        document.getElementById('cm-name').textContent    = btn.dataset.name;
+        document.getElementById('cm-subject').textContent = btn.dataset.subject;
+        document.getElementById('cm-message').textContent = btn.dataset.message;
+        document.getElementById('cm-date').textContent    = btn.dataset.date;
+        const emailEl = document.getElementById('cm-email');
+        emailEl.textContent = btn.dataset.email;
+        emailEl.href        = 'mailto:' + btn.dataset.email;
+        document.getElementById('cm-reply').href = 'mailto:' + btn.dataset.email
+            + '?subject=Re: ' + encodeURIComponent(btn.dataset.subject);
+    });
+</script>
+
 <!-- add city modal -->
  <div class="modal fade" id="addCityModal" tabindex="-1" aria-labelledby="addCityModalLabel" aria-hidden="true">
   <div class="modal-dialog">
