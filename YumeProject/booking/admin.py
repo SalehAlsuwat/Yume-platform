@@ -5,7 +5,7 @@ from .models import Booking
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'customer_name', 'capsule_info', 'status', 'total_price', 'check_in', 'quantity', 'booking_type')
+    list_display = ('id', 'customer_name', 'capsule_info', 'status', 'total_price', 'check_in', 'check_out', 'quantity', 'booking_type')
     list_filter = ('status', 'booking_type', 'created_at', 'check_in')
     search_fields = ('customer__user__username', 'customer__user__email', 'capsule__hotel__name')
     readonly_fields = ('created_at', 'id')

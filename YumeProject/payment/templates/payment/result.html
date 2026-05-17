@@ -2,29 +2,239 @@
 
 {% block title %}Payment Result{% endblock %}
 
+{% block extra_head %}
+<style>
+    .payment-result-wrap {
+        --surface: #ffffff;
+        --ink: #102a43;
+        --muted: #5c6f82;
+        --success: #1f9d55;
+        --success-soft: #e9f8ee;
+        --accent: #0ea5e9;
+        --line: rgba(16, 42, 67, 0.1);
+        --shadow: 0 18px 40px rgba(16, 42, 67, 0.12);
+        background:
+            radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.14), transparent 30%),
+            radial-gradient(circle at 85% 10%, rgba(31, 157, 85, 0.12), transparent 26%),
+            linear-gradient(180deg, #f6fbff 0%, #ffffff 100%);
+        border-radius: 1.5rem;
+        padding: 1rem;
+    }
+
+    .payment-result-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 1.25rem;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .payment-result-header {
+        background: linear-gradient(120deg, #e8f7ef 0%, #f0faff 100%);
+        border-bottom: 1px solid var(--line);
+        padding: 1.4rem;
+        text-align: center;
+    }
+
+    .payment-result-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--success-soft);
+        color: var(--success);
+        font-size: 1.8rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .payment-result-title {
+        margin: 0;
+        color: var(--ink);
+        font-weight: 700;
+        font-size: clamp(1.15rem, 2.8vw, 1.65rem);
+    }
+
+    .payment-result-subtitle {
+        margin: 0.35rem 0 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+    }
+
+    .result-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .result-item {
+        border: 1px solid var(--line);
+        border-radius: 0.9rem;
+        padding: 0.8rem 0.95rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 0.9rem;
+        align-items: center;
+    }
+
+    .result-item-label {
+        color: var(--muted);
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .result-item-value {
+        color: var(--ink);
+        font-weight: 600;
+        margin: 0;
+        text-align: right;
+        word-break: break-word;
+    }
+
+    .result-total {
+        border-color: rgba(14, 165, 233, 0.35);
+        background: rgba(14, 165, 233, 0.06);
+    }
+
+    .redirect-panel {
+        border-top: 1px dashed var(--line);
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        text-align: center;
+    }
+
+    .redirect-text {
+        color: var(--muted);
+        margin-bottom: 0.7rem;
+    }
+
+    .redirect-progress {
+        height: 7px;
+        background: #e7eef6;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 0.95rem;
+    }
+
+    .redirect-progress > span {
+        display: block;
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(90deg, var(--accent), #34d399);
+        transform-origin: left;
+        animation: redirect-shrink 20s linear forwards;
+    }
+
+    @keyframes redirect-shrink {
+        from { transform: scaleX(1); }
+        to { transform: scaleX(0); }
+    }
+
+    @media (max-width: 576px) {
+        .payment-result-wrap {
+            border-radius: 1rem;
+            padding: 0.6rem;
+        }
+
+        .result-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .result-item-value {
+            text-align: left;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4 p-lg-5">
-                {% if success %}
-                    <div class="alert alert-success">
-                        Payment completed successfully.
-                    </div>
-                {% else %}
-                    <div class="alert alert-danger">
-                        We could not confirm the payment.
-                    </div>
-                {% endif %}
+    <div class="col-lg-8 col-xl-7">
+        <div class="payment-result-wrap">
+            <div class="payment-result-card">
+                <div class="payment-result-header">
+                    <span class="payment-result-icon" aria-hidden="true"><i class="bi bi-check2-circle"></i></span>
+                    <h1 class="payment-result-title">Payment Successful</h1>
+                    <p class="payment-result-subtitle">Your booking details are confirmed and saved.</p>
+                </div>
 
-                {% if booking %}
-                    <p class="mb-1"><strong>Booking:</strong> #{{ booking.pk }}</p>
-                    <p class="mb-1"><strong>Status:</strong> {{ booking.status }}</p>
-                    <p class="mb-1"><strong>Capsule:</strong> {{ booking.capsule.capsule_num }}</p>
-                    <p class="mb-0"><strong>Total:</strong> {{ booking.total_price }} SAR</p>
-                {% endif %}
+                <div class="card-body p-3 p-md-4 p-lg-5">
+                    {% if booking %}
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <p class="result-item-label">Booking</p>
+                                <p class="result-item-value">#{{ booking.pk }}</p>
+                            </div>
+                            <div class="result-item">
+                                <p class="result-item-label">Customer</p>
+                                <p class="result-item-value">{{ booking.customer.user.get_full_name }}</p>
+                            </div>
+                            <div class="result-item">
+                                <p class="result-item-label">Provider</p>
+                                <p class="result-item-value">{{ payment.provider_name }}</p>
+                            </div>
+                            <div class="result-item">
+                                <p class="result-item-label">Status</p>
+                                <p class="result-item-value">{{ booking.status }}</p>
+                            </div>
+                            <div class="result-item">
+                                <p class="result-item-label">Paid at</p>
+                                <p class="result-item-value">{{ payment.paid_at }}</p>
+                            </div>
+                            <div class="result-item">
+                                <p class="result-item-label">Capsule</p>
+                                <p class="result-item-value">{{ booking.capsule.capsule_num }}</p>
+                            </div>
+                            <div class="result-item">
+                                <p class="result-item-label">Booking Type</p>
+                                <p class="result-item-value">{{ booking.booking_type }}</p>
+                            </div>
+                            <div class="result-item">
+                                <p class="result-item-label">Check-in</p>
+                                <p class="result-item-value">{{ booking.check_in }}</p>
+                            </div>
+                            <div class="result-item">
+                                <p class="result-item-label">Check-out</p>
+                                <p class="result-item-value">{{ booking.check_out }}</p>
+                            </div>
+                            <div class="result-item result-total">
+                                <p class="result-item-label">Total</p>
+                                <p class="result-item-value">{{ booking.total_price }} SAR</p>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="redirect-panel">
+                        <p class="redirect-text">
+                            Redirecting to your profile in <strong><span id="redirect-counter">20</span>s</strong>...
+                        </p>
+                        <div class="redirect-progress" aria-hidden="true"><span></span></div>
+                        <a href="{% url 'accounts:account_view' %}" class="btn btn-primary">
+                            Go to profile now
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    const redirectInSeconds = 20;
+    const counterEl = document.getElementById("redirect-counter");
+    let secondsLeft = redirectInSeconds;
+
+    const interval = setInterval(() => {
+        secondsLeft -= 1;
+        if (counterEl && secondsLeft >= 0) {
+            counterEl.textContent = String(secondsLeft);
+        }
+    }, 1000);
+
+    setTimeout(() => {
+        clearInterval(interval);
+        window.location.href = "{% url 'accounts:account_view' %}";
+    }, redirectInSeconds * 1000);
+</script>
 {% endblock %}
