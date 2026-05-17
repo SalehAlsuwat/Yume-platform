@@ -6,7 +6,7 @@ app_name="hotel_owner"
 
 urlpatterns = [
     # ── Hotel ──
-    path('', views.hotel_pending, name='hotel_pending'),
+    path('', views.my_hotels, name='my_hotels'),
     path('owner/', views.owner_view, name='owner_view'),
     path('create/', views.hotel_create, name='hotel_create'),
     path('<int:pk>/update/', views.hotel_update, name='hotel_update'),
