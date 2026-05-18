@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+from booking.models import Booking
+
 from .forms import CustomerSignUpForm, OwnerSignUpForm, SignInForm, UserEditForm, CustomerProfileEditForm, OwnerProfileEditForm
 from .models import CustomerProfile, OwnerProfile, GROUP_CUSTOMER, GROUP_OWNER
 
@@ -116,4 +118,12 @@ def edit_profile(request):
 
 @login_required
 def account_view(request):
-    return render(request, 'accounts/account.html')
+    bookings = []
+    if request.user.is_customer:
+        bookings = (
+            Booking.objects
+            .filter(customer=request.user.customer_profile)
+            .select_related('capsule__hotel')
+            .order_by('-created_at')
+        )
+    return render(request, 'accounts/account.html', {'bookings': bookings})
