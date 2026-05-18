@@ -21,9 +21,12 @@ def hotel_list(request):
         hotels = hotels.filter(name__icontains=q)
 
     # ── City Filter ──
-    city_id = request.GET.get('city')
-    if city_id:
-        hotels = hotels.filter(city__id=city_id)
+    city_name = request.GET.get('city')
+    if city_name:
+        hotels = hotels.filter(city__name__icontains=city_name)
+    # city_id = request.GET.get('city')
+    # if city_id:
+    #     hotels = hotels.filter(city__id=city_id)
 
     # ── Price Filter ──
     price = request.GET.get('price')
@@ -64,4 +67,7 @@ def hotel_detail(request, pk):
         'capsules_count': capsules.count(),
         'reviews': reviews,
         'related_hotels': related_hotels,
+        'check_in': request.GET.get('check_in', ''),   # ← add
+        'check_out': request.GET.get('check_out', ''), # ← add
+        'capsules_qty': request.GET.get('capsules', 1),
     })
