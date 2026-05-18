@@ -107,7 +107,8 @@
                             <small>/ hour</small>
                         </p>
 
-                        <a href="{% url 'hotels:hotel_detail' hotel.pk %}" class="btn btn-dark">View Hotel</a>
+                        <!-- <a href="{% url 'hotels:hotel_detail' hotel.pk %}" class="btn btn-dark">View Hotel</a> -->
+                        <a href="{% url 'hotels:hotel_detail' hotel.pk %}?check_in={{ request.GET.check_in }}&check_out={{ request.GET.check_out }}&capsules={{ request.GET.capsules }}" class="btn btn-dark">View Hotel</a>
                     </div>
                 </div>
             </div>

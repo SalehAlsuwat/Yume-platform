@@ -61,137 +61,94 @@
 
 <div class="rounded-bottom-5 text-light border-bottom p-4 position-relative">
 
-    <form>
+    <form action="{% url 'hotels:hotel_list' %}" method="GET">
 
-        <div class="row g-3 align-items-center">
+    <div class="row g-3 align-items-center">
 
-            <!-- LOCATION -->
-            <div class="col-lg">
-
-                <div class="border rounded-4 px-4 py-1 h-100">
-
-                    <label class="small fw-semibold opacity-75 mb-2 d-block">
-                        Where to?
-                    </label>
-
-                    <div class="d-flex align-items-center gap-3">
-
-                        <i class="bi bi-geo-alt fs-5  text-light"></i>
-
-                        <!-- SEARCHABLE CITY -->
-                        <input type="text"
-                               class="form-control border-0 shadow-none bg-transparent p-0 text-light"
-                               placeholder="Search city..."
-                               list="cities">
-
-                        <datalist id="cities">
-
-                            <option value="Riyadh">
-                            <option value="Jeddah">
-                            <option value="Makkah">
-                            <option value="Madinah">
-                            <option value="Dammam">
-                            <option value="Khobar">
-                            <option value="Taif">
-                            <option value="Abha">
-
-                        </datalist>
-
-                    </div>
-
+        <!-- LOCATION -->
+        <div class="col-lg">
+            <div class="border rounded-4 px-4 py-1 h-100">
+                <label class="small fw-semibold opacity-75 mb-2 d-block">Where to?</label>
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-geo-alt fs-5 text-light"></i>
+                    <input type="text"
+                           name="city"
+                           class="form-control border-0 shadow-none bg-transparent p-0 text-light"
+                           placeholder="Search city..."
+                           list="cities">
+                    <datalist id="cities">
+                        <option value="Riyadh">
+                        <option value="Jeddah">
+                        <option value="Makkah">
+                        <option value="Madinah">
+                        <option value="Dammam">
+                        <option value="Khobar">
+                        <option value="Taif">
+                        <option value="Abha">
+                    </datalist>
                 </div>
-
             </div>
-
-            <!-- DATE RANGE -->
-            <div class="col-lg">
-
-                <div class="border rounded-4  px-4 py-1 h-100">
-
-                    <label class="small fw-semibold opacity-75 mb-2 d-block">
-                        Dates
-                    </label>
-
-                    <div class="d-flex align-items-center gap-3">
-
-                        <i class="bi bi-calendar3 fs-5  text-light"></i>
-
-                        <!-- DATE PICKER -->
-                        <input type="text"
-                               id="datePicker"
-                               class="form-control border-0 shadow-none bg-transparent p-0 text-light"
-                               placeholder="Check-in — Check-out">
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- CAPSULES -->
-            <div class="col-lg">
-
-                <div class="border rounded-4 px-4 py-1 h-100">
-
-                    <label class="small fw-semibold opacity-75 d-block">
-                        Capsules
-                    </label>
-
-                    <div class="d-flex align-items-center justify-content-between">
-
-                        <div class="d-flex align-items-center gap-3">
-
-                            <i class="bi bi-door-closed fs-5  text-light"></i>
-
-                            <span id="capsuleCount">
-                                1 Capsule
-                            </span>
-
-                        </div>
-
-                        <!-- COUNTER -->
-                        <div class="d-flex align-items-center gap-2">
-
-                            <button type="button"
-                                    class="btn border-0 bg-transparent px-3 py-2"
-                                    onclick="decreaseCapsule()">
-
-                                <i class="bi bi-dash-circle text-light"></i>
-
-                            </button>
-
-                            <button type="button"
-                                    class="btn border-0 bg-transparent px-3 py-2"
-                                    onclick="increaseCapsule()">
-
-                                <i class="bi bi-plus-circle text-light"></i>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- SEARCH -->
-            <div class="col-lg-auto">
-
-                <button type="submit"
-                        class="btn rounded-circle bg-dark px-4 py-4 d-flex align-items-center justify-content-center"
-                        style="width:65px; height:65px;">
-
-                    <i class="bi bi-search fs-5  text-light"></i>
-
-                </button>
-
-            </div>
-
         </div>
 
-    </form>
+        <!-- DATE RANGE -->
+        <div class="col-lg">
+            <div class="border rounded-4 px-4 py-1 h-100">
+                <label class="small fw-semibold opacity-75 mb-2 d-block">Dates</label>
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-calendar3 fs-5 text-light"></i>
+                    <input type="text"
+                           id="datePicker"
+                           name="dates"
+                           class="form-control border-0 shadow-none bg-transparent p-0 text-light"
+                           placeholder="Check-in — Check-out">
+                    <!-- hidden inputs for check_in and check_out -->
+                    <input type="hidden" name="check_in" id="check_in">
+                    <input type="hidden" name="check_out" id="check_out">
+                </div>
+            </div>
+        </div>
+
+        <!-- CAPSULES -->
+        <div class="col-lg">
+            <div class="border rounded-4 px-4 py-1 h-100">
+                <label class="small fw-semibold opacity-75 d-block">Capsules</label>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-door-closed fs-5 text-light"></i>
+                        <span id="capsuleCount">1 Capsule</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button"
+                                class="btn border-0 bg-transparent px-3 py-2"
+                                onclick="decreaseCapsule()">
+                            <i class="bi bi-dash-circle text-light"></i>
+                        </button>
+                        <button type="button"
+                                class="btn border-0 bg-transparent px-3 py-2"
+                                onclick="increaseCapsule()">
+                            <i class="bi bi-plus-circle text-light"></i>
+                        </button>
+                    </div>
+                    <!-- hidden input for capsules count -->
+                    <input type="hidden" name="capsules" id="capsulesInput" value="1">
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="col-lg-auto">
+            <button type="submit"
+                    class="btn rounded-circle bg-dark px-4 py-4 d-flex align-items-center justify-content-center"
+                    style="width:65px; height:65px;">
+                <i class="bi bi-search fs-5 text-light"></i>
+            </button>
+        </div>
+
+    </div>
+
+</form>
+
+
 
 </div>
 
@@ -209,51 +166,43 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
-
-    // DATE RANGE PICKER
+    // ── Date Range Picker ──
     flatpickr("#datePicker", {
-
         mode: "range",
-
         minDate: "today",
-
         dateFormat: "Y-m-d",
-
+        onClose: function(selectedDates) {
+            if (selectedDates.length === 2) {
+                const pad = n => String(n).padStart(2, '0');
+                const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+                document.getElementById('check_in').value = fmt(selectedDates[0]);
+                document.getElementById('check_out').value = fmt(selectedDates[1]);
+            }
+        }
     });
 
-
-
-    // CAPSULE COUNTER
-    let capsuleCount = 1;
+    // ── Capsule Counter ──
+    let capsules = 1;
 
     function increaseCapsule() {
-
-        capsuleCount++;
-
+        capsules++;
         updateCapsule();
-
     }
 
     function decreaseCapsule() {
-
-        if (capsuleCount > 1) {
-
-            capsuleCount--;
-
+        if (capsules > 1) {
+            capsules--;
             updateCapsule();
-
         }
-
     }
 
     function updateCapsule() {
-
-        document.getElementById("capsuleCount").innerText =
-            capsuleCount + (capsuleCount > 1 ? " Capsules" : " Capsule");
-
+        document.getElementById('capsuleCount').innerText = capsules + ' Capsule' + (capsules > 1 ? 's' : '');
+        document.getElementById('capsulesInput').value = capsules;
     }
-
 </script>
+
+
 
     </section>
 
