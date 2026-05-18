@@ -115,13 +115,61 @@
                 <!-- Bookings pane -->
                 <div class="tab-pane fade" id="bookings" role="tabpanel">
                     <h6 class="fw-semibold mb-3">Your Bookings</h6>
-                    {# TODO: {% for booking in bookings %} #}
+                    {% if bookings %}
+                        {% for booking in bookings %}
+                        <div class="card border-0 shadow-sm rounded-3 mb-3">
+                            {% if booking.capsule.hotel.image %}
+                            <img src="{{ booking.capsule.hotel.image.url }}" class="card-img-top rounded-top-3" style="height:120px;object-fit:cover;" alt="{{ booking.capsule.hotel.name }}">
+                            {% endif %}
+                            <div class="card-body pb-2">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-0 fw-semibold">{{ booking.capsule.hotel.name }}</h6>
+                                        <small class="text-muted">Capsule {{ booking.capsule.capsule_num }}</small>
+                                    </div>
+                                    {% if booking.status == 'paid' %}
+                                        <span class="badge bg-success">Paid</span>
+                                    {% elif booking.status == 'pending' %}
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    {% elif booking.status == 'cancelled' %}
+                                        <span class="badge bg-secondary">Cancelled</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Failed</span>
+                                    {% endif %}
+                                </div>
+                                <hr class="my-2">
+                                <div class="row text-muted small">
+                                    <div class="col-6">
+                                        <i class="bi bi-box-arrow-in-right me-1"></i>{{ booking.check_in|date:"d M Y, H:i" }}
+                                    </div>
+                                    <div class="col-6">
+                                        <i class="bi bi-box-arrow-right me-1"></i>{{ booking.check_out|date:"d M Y, H:i" }}
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-2 small">
+                                    <span class="text-muted">{{ booking.quantity }} {{ booking.booking_type }}{{ booking.quantity|pluralize }}</span>
+                                    <span class="fw-semibold">${{ booking.total_price }}</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
+                                {% if booking.status == 'paid' %}
+                                    <a href="{% url 'payment:payment' booking.pk %}" class="btn btn-sm btn-outline-success w-100">
+                                        <i class="bi bi-receipt me-1"></i>View Receipt
+                                    </a>
+                                {% elif booking.status == 'pending' or booking.status == 'failed' %}
+                                    <a href="{% url 'payment:payment' booking.pk %}" class="btn btn-sm btn-dark w-100">
+                                        <i class="bi bi-credit-card me-1"></i>Pay Now
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
                     <div class="text-center text-muted py-5">
                         <i class="bi bi-calendar-x" style="font-size:2.5rem;"></i>
                         <p class="mt-2 mb-0">No bookings yet</p>
-                        {# TODO: replace placeholder with booking cards #}
                     </div>
-                    {# TODO: {% endfor %} #}
+                    {% endif %}
                 </div>
 
                 <!-- Settings pane -->
